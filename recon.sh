@@ -39,7 +39,7 @@ then
 elif [ ! -z $INPUT_FILE ] && [ -f $INPUT_FILE ]
 then
     create_output_dir
-    echo "using specified file"
+    scan_domains_from_file
 else
     echo "No domain or file spcified"
 fi

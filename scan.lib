@@ -1,6 +1,6 @@
 sublist3r_scan() {
     source $PATH_TO_SUBLIST3R/.venv/bin/activate
-    python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $DOMAIN -n -o ${OUTPUT_DIR}/sublist3r_${DOMAIN}
+    python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $line -n -o ${OUTPUT_DIR}/sublist3r_${line}
     deactivate
 }
 
@@ -16,8 +16,15 @@ scan() {
 }
 
 scan_domains_from_array() {
-    for DOMAIN in ${DOMAINS[@]}
+    for line in ${DOMAINS[@]}
     do
         scan
     done
+}
+
+scan_domains_from_file() {
+    while IFS= read -r line || [ -n "$line" ]
+    do
+        scan
+    done < $INPUT_FILE
 }
