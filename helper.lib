@@ -1,0 +1,11 @@
+
+#!/bin/bash
+
+help() {
+    echo -e "recon.sh: bash recon.sh [-i][-t][-h]\n"
+    echo "   OPTIONS:"
+    echo "     -i      set a single domain to scan, if not set all domains in"
+    echo "             input.txt are scanned"
+    echo "     -t      specify which tool to run (default: all tools are run)"
+    echo "     -h      show help page (this)"
+}
