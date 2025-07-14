@@ -1,0 +1,23 @@
+sublist3r_scan() {
+    source $PATH_TO_SUBLIST3R/.venv/bin/activate
+    python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $DOMAIN -n -o ${OUTPUT_DIR}/sublist3r_${DOMAIN}
+    deactivate
+}
+
+scan() {
+    case $TOOL in 
+        sublist3r)
+            sublist3r_scan
+            ;;
+        *)
+            echo "Run All"
+            ;;
+    esac
+}
+
+scan_domains_from_array() {
+    for DOMAIN in ${DOMAINS[@]}
+    do
+        scan
+    done
+}

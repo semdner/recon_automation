@@ -1,25 +1,26 @@
 #!/bin/bash
 
 source ./helper.lib
+source ./scan.lib
 
 # default output directory
 OUTPUT_DIR="output/"
-
-# default location to search for domains
-DOMAIN=()
 
 # path to used tools
 PATH_TO_SUBLIST3R="/home/max/infosec/common/tools/Sublist3r/"
 
 # get values from flags
-while getopts ":d:t:h" opt
+while getopts ":f:d:t:h" opt
 do
-    case ${opt} in
+    case $opt in
+        f)
+            INPUT_FILE=$OPTARG
+            ;;
         d)
-            DOMAIN+=("$OPTARG")
-            echo ${DOMAIN}
+            DOMAINS+=($OPTARG)
             ;;
         t)
+            TOOL=$OPTARG
             ;;
         h)
             help
@@ -29,23 +30,18 @@ do
     esac
 done
 
-echo $DOMAIN
-
-if [[ ! -z "$DOMAIN" ]]
+# check if domain(s) or input file is set
+# if set run tools
+if [ ! -z $DOMAINS ]
 then
-    echo "var is not empty"
-elif test -f "$DOMAINS"
+    create_output_dir
+    scan_domains_from_array
+elif [ ! -z $INPUT_FILE ] && [ -f $INPUT_FILE ]
 then
-    echo "input.txt exists"
+    create_output_dir
+    echo "using specified file"
 else
-    echo -e "ERROR: No domain or domain list specified.\nSet single domain via -d DOMAIN"
-fi
-
-
-if [ ! -d "$OUTPUT_DIR" ]
-then
-    echo "Creating output directory $OUTPUT_DIR"
-    mkdir $OUTPUT_DIR
+    echo "No domain or file spcified"
 fi
 
 
