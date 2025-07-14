@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sublist3r_scan() {
     source $PATH_TO_SUBLIST3R/.venv/bin/activate
     python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $line -n -o ${OUTPUT_DIR}/sublist3r_${line}
