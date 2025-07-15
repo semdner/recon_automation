@@ -2,17 +2,46 @@
 
 sublist3r_scan() {
     source $PATH_TO_SUBLIST3R/.venv/bin/activate
-    python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $line -n -o ${OUTPUT_DIR}/sublist3r_${line}
+    python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $line -O plain -o ${OUTPUT_DIR}/sublist3r_${line}
     deactivate
 }
+
+crtsh_scan() {
+    echo $line
+    bash $PATH_TO_CRTSH/crt.sh -d $line
+    mv output/domain.${line}.txt output/crtsh_${line}
+}
+
+github_subdomains_scan() {
+    $PATH_TO_GITHUB_SUBDOMAINS -d $line -t $GITHUB_TOKEN -raw > ${OUTPUT_DIR}/github_subdomains_$line
+}
+
+dirsearch_scan() {
+    source $PATH_TO_DIRSEARCH/.venv/bin/activate
+    python $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -o ${OUTPUT_DIR}/dirsearch_${line}
+    deactivate
+}
+
 
 scan() {
     case $TOOL in 
         sublist3r)
             sublist3r_scan
             ;;
+        crtsh)
+            crtsh_scan
+            ;;
+        github-subdomains)
+            github_subdomains_scan
+            ;;
+        dirsearch)
+            crtsh_scan
+            ;;
         *)
-            echo "Run All"
+            sublist3r_scan
+            crtsh_scan
+            github_subdomains_scan
+            dirsearch_scan
             ;;
     esac
 }
