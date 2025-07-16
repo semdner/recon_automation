@@ -3,37 +3,41 @@
 source ./helper.lib
 
 sublist3r_scan() {
+    echo -e "   Using sublist3r to scan ${line}"
     source $PATH_TO_SUBLIST3R/.venv/bin/activate
-    python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $line -o ${OUTPUT_DIR}/sublist3r_${line}
+    python ${PATH_TO_SUBLIST3R}/sublist3r.py -d $line -o /tmp/${line}/sublist3r &> /dev/null
     deactivate
 }
 
 crtsh_scan() {
-    echo $line
-    bash $PATH_TO_CRTSH/crt.sh -d $line
-    mv ${OUTPUT_DIR}/domain.${line}.txt ${OUTPUT_DIR}/crtsh_${line}
+    echo -e "   Using crt.sh to scan ${line}"
+    bash $PATH_TO_CRTSH/crt.sh -d $line &> /dev/null
+    mv ${OUTPUT_DIR}/domain.${line}.txt /tmp/${line}/crtsh
 }
 
 github_subdomains_scan() {
-    $PATH_TO_GITHUB_SUBDOMAINS -d $line -t $GITHUB_TOKEN -raw > ${OUTPUT_DIR}/github-subdomains_$line
+    echo -e "   Using github-subdomains to scan ${line}"
+    $PATH_TO_GITHUB_SUBDOMAINS -d $line -t $GITHUB_TOKEN -raw > /tmp/${line}/github-subdomains &> /dev/null
     rm ${line}.txt
 }
 
 dirsearch_scan() {
+    echo -e "   Using dirsearch to scan ${line}"
     source $PATH_TO_DIRSEARCH/.venv/bin/activate
-    python $PATH_TO_DIRSEARCH/dirsearch.py -u $line -o ${OUTPUT_DIR}/dirsearch_${line}
+    python $PATH_TO_DIRSEARCH/dirsearch.py -u $line -o /tmp/${line}/dirsearch &> /dev/null
     deactivate
 }
 
 httprobe_scan() {
+    echo -e "Using httprobe to filter alive subdomains"
     TEMP_FILE=$(mktemp)
     cat $file > $TEMP_FILE
-    cat $TEMP_FILE | $PATH_TO_HTTPROBE > $file
+    cat $TEMP_FILE | $PATH_TO_HTTPROBE > ${file}
     rm $TEMP_FILE
 }
 
 
-scan() {
+subdomain_scan() {
     case $TOOL in 
         sublist3r)
             sublist3r_scan
@@ -59,13 +63,19 @@ scan() {
 scan_domains_from_array() {
     for line in ${DOMAINS[@]}
     do
-        scan
+        mkdir /tmp/${line}
+        echo -e "Searching for all subdomains of ${line}"
+        subdomain_scan
+        create_subdomain_report
     done
 }
 
 scan_domains_from_file() {
     while IFS= read -r line || [ -n "$line" ]
     do
-        scan
+        mkdir /tmp/${line}
+        echo -e "Searching for all subdomains of ${line}"
+        subdomain_scan
+        create_subdomain_report
     done < $INPUT_FILE
 }

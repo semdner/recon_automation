@@ -12,7 +12,7 @@ help() {
 create_output_dir() {
     if [ ! -d "$OUTPUT_DIR" ]
     then
-        echo "Creating ${OUTPUT_DIR}..."
+        echo "Creating ${OUTPUT_DIR}/ directory"
         mkdir $OUTPUT_DIR
     fi
 }
@@ -26,6 +26,7 @@ env_check() {
         echo -e "   PATH_TO_CRTSH=/PATH/TO/CRTSH"
         echo -e "   PATH_TO_DIRSEARCH=/PATH/TO/DIRSEARCH"
         echo -e "   PATH_TO_GITHUB_SUBDOMAINS=/PATH/TO/GITHUB_SUBDOMAINS"
+        echo -e "   PATH_TO_HTTPROBE=/PATH/TO/HTTPROBE"
         echo -e "   GITHUB_TOKEN=YOUR GITHUB TOKEN FOR GITHUB SUBDOMAINS\n"
         echo -e "Make sure not to share you GitHub Token"
         exit 1
@@ -33,22 +34,14 @@ env_check() {
 }
 
 create_subdomain_report() {
-    for entry in ${OUTPUT_DIR}/*
-    do
-        IFS="_"
-        read -ra TOOL_DOMAIN <<< $entry
-        # echo ${TOOL_DOMAIN[1]}
-        if [ ! -f ${OUTPUT_DIR}/subdomains_${TOOL_DOMAIN[1]} ]
-        then
-            unset IFS
-            FILES=$(grep -Ril ${OUTPUT_DIR} -e ${TOOL_DOMAIN[1]})
-            sort -u $FILES > ${OUTPUT_DIR}/subdomains_${TOOL_DOMAIN[1]}
-            rm $FILES
-        fi
-    done
+    echo -e "Creating report of all found subdomains for ${line}"
+    FILES=$(find /tmp/$line/*)
+    sort -u $FILES > ${OUTPUT_DIR}/subdomains_${line}
+    rm -r /tmp/${line}
 }
 
 filter_alive_domains() {
+    unset IFS
     for file in ${OUTPUT_DIR}/*
     do
         httprobe_scan
