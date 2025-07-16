@@ -35,12 +35,14 @@ if [ ! -z $DOMAINS ]
 then
     create_output_dir
     scan_domains_from_array
-    create_report
+    create_subdomain_report
+    filter_alive_domains
 elif [ ! -z $INPUT_FILE ] && [ -f $INPUT_FILE ]
 then
     create_output_dir
     scan_domains_from_file
-    create_report
+    create_subdomain_report
+    filter_alive_domains
 else
     echo "No domain or file spcified"
 fi

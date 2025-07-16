@@ -32,17 +32,25 @@ env_check() {
     fi
 }
 
-create_report() {
+create_subdomain_report() {
     for entry in ${OUTPUT_DIR}/*
     do
         IFS="_"
         read -ra TOOL_DOMAIN <<< $entry
         # echo ${TOOL_DOMAIN[1]}
-        if [ ! -f ${OUTPUT_DIR}/report_${TOOL_DOMAIN[1]} ]
+        if [ ! -f ${OUTPUT_DIR}/subdomains_${TOOL_DOMAIN[1]} ]
         then
             unset IFS
             FILES=$(grep -Ril ${OUTPUT_DIR} -e ${TOOL_DOMAIN[1]})
-            sort -u $FILES > ${OUTPUT_DIR}/report_${TOOL_DOMAIN[1]}
+            sort -u $FILES > ${OUTPUT_DIR}/subdomains_${TOOL_DOMAIN[1]}
+            rm $FILES
         fi
     done
+}
+
+filter_alive_domains() {
+    for file in ${OUTPUT_DIR}/*
+    do
+        httprobe_scan
+    done 
 }

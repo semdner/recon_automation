@@ -25,6 +25,13 @@ dirsearch_scan() {
     deactivate
 }
 
+httprobe_scan() {
+    TEMP_FILE=$(mktemp)
+    cat $file > $TEMP_FILE
+    cat $TEMP_FILE | $PATH_TO_HTTPROBE > $file
+    rm $TEMP_FILE
+}
+
 
 scan() {
     case $TOOL in 
