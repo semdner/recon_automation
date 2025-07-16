@@ -20,7 +20,14 @@ create_output_dir() {
 env_check() {
     if [ ! -f .env ]
     then
-        echo ".env file missing"
+        echo -e "ERROR: .env file missing\n"
+        echo -e "File must contain the follow variables"
+        echo -e "   PATH_TO_SUBLIST3R=/PATH/TO/SUBLIST3R"
+        echo -e "   PATH_TO_CRTSH=/PATH/TO/CRTSH"
+        echo -e "   PATH_TO_DIRSEARCH=/PATH/TO/DIRSEARCH"
+        echo -e "   PATH_TO_GITHUB_SUBDOMAINS=/PATH/TO/GITHUB_SUBDOMAINS"
+        echo -e "   GITHUB_TOKEN=YOUR GITHUB TOKEN FOR GITHUB SUBDOMAINS\n"
+        echo -e "Make sure not to share you GitHub Token"
         exit 1
     fi
 }
