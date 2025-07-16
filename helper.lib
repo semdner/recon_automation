@@ -16,3 +16,26 @@ create_output_dir() {
         mkdir $OUTPUT_DIR
     fi
 }
+
+env_check() {
+    if [ ! -f .env ]
+    then
+        echo ".env file missing"
+        exit 1
+    fi
+}
+
+create_report() {
+    for entry in ${OUTPUT_DIR}/*
+    do
+        IFS="_"
+        read -ra TOOL_DOMAIN <<< $entry
+        # echo ${TOOL_DOMAIN[1]}
+        if [ ! -f ${OUTPUT_DIR}/report_${TOOL_DOMAIN[1]} ]
+        then
+            unset IFS
+            FILES=$(grep -Ril ${OUTPUT_DIR} -e ${TOOL_DOMAIN[1]})
+            sort -u $FILES > ${OUTPUT_DIR}/report_${TOOL_DOMAIN[1]}
+        fi
+    done
+}
